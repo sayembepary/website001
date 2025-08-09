@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #7ec850, #4b6f2f);
+  font-family: 'Arial', sans-serif;
+  color: #eee;
+  text-shadow: 1px 1px 1px #000;
+}
+
+header {
+  background: #3b5915;
+  padding: 2rem 1rem;
+  text-align: center;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 2rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.hero {
+  padding: 3rem 1rem;
+  text-align: center;
+  background: url('../images/banner.jpg') center center/cover no-repeat;
+  color: #fff;
+  text-shadow: 2px 2px 5px #000;
+}
+
+.hero h1 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 3rem;
+}
+
+.btn {
+  display: inline-block;
+  background: #6b8e23;
+  color: #fff;
+  padding: 0.8rem 1.6rem;
+  margin: 0 0.5rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  border: 3px solid #405310;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  font-family: 'Press Start 2P', cursive;
+}
+
+.btn:hover {
+  background: #8cbf26;
+}
+
+section {
+  max-width: 900px;
+  margin: 3rem auto;
+  padding: 0 1rem;
+}
+
+h2 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #c8e06b;
+  text-transform: uppercase;
+}
+
+ul {
+  list-style-type: square;
+  padding-left: 1.5rem;
+}
+
+.ip-box {
+  background: #2e4a0e;
+  border: 2px solid #405310;
+  border-radius: 8px;
+  padding: 1rem;
+  font-family: monospace;
+  font-size: 1.1rem;
+  max-width: 350px;
+  margin: 0 auto 2rem auto;
+  cursor: pointer;
+}
+
+.discord-widget {
+  max-width: 350px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+footer {
+  background: #3b5915;
+  color: #ccc;
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 0.9rem;
+}
