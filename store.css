@@ -1,0 +1,129 @@
+body {
+  margin: 0;
+  background-color: #0e1012;
+  color: #ffffff;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+header {
+  background-color: #1b1d21;
+  padding: 15px 30px;
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 16px;
+  color: #74f2ce;
+}
+
+.menu a {
+  margin-left: 20px;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+/* Home button style */
+.menu button.home-btn {
+  background-color: #00c896;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 12px;
+  transition: background-color 0.3s ease;
+}
+
+.menu button.home-btn:hover {
+  background-color: #009d75;
+}
+
+/* Discord button style */
+.discord-btn {
+  background-color: #5865f2;
+  color: white !important;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 12px;
+  transition: background-color 0.3s ease;
+}
+
+.discord-btn:hover {
+  background-color: #4752c4;
+}
+
+.store-title {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.store-title h1 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 20px;
+}
+
+.rank-items {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 30px auto;
+  flex-wrap: wrap;
+  padding: 0 20px;
+}
+
+.rank-card {
+  background-color: #1a1c20;
+  border: 1px solid #2a2d32;
+  border-radius: 10px;
+  padding: 20px;
+  width: 250px;
+  text-align: center;
+}
+
+.rank-card h2 {
+  color: #74f2ce;
+}
+
+.rank-card ul {
+  list-style: none;
+  padding: 0;
+  text-align: left;
+}
+
+.rank-card ul li {
+  margin: 8px 0;
+}
+
+/* Buy button */
+.buy-btn {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 8px 15px;
+  background-color: #00c896;
+  color: white;
+  border-radius: 5px;
+  text-decoration: none;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 12px;
+  transition: background-color 0.3s ease;
+}
+
+.buy-btn:hover {
+  background-color: #009d75;
+}
+
+footer {
+  text-align: center;
+  padding: 15px;
+  background-color: #1b1d21;
+  color: #777;
+  font-size: 12px;
+}
