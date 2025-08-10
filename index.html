@@ -1,70 +1,640 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>BOTREX SMP - Minecraft Server</title>
-<link rel="stylesheet" href="css/styles.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BOTREX SMP</title>
+
+  <!-- Pixel / Minecraft-like font -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg-1:#0b1220;
+      --bg-2:#07121a;
+      --accent:#7ee787;
+      --accent-2:#7ad3ff;
+      --accent-3:#ffd166;
+      --muted:#b8c1c9;
+      --card:#0f1720;
+      --glass: rgba(255,255,255,0.04);
+      --glass-2: rgba(255,255,255,0.02);
+      --glass-3: rgba(0,0,0,0.45);
+      --pixel-border: #171717;
+      --radius: 14px;
+    }
+
+    /* Reset & base */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color: #e6eef6;
+      background: linear-gradient(160deg,var(--bg-1),var(--bg-2) 60%);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-y:auto;
+      line-height:1.4;
+    }
+
+    /* Top nav */
+    .nav{
+      position:fixed;
+      left:0;right:0;top:18px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      padding:8px 18px;
+      max-width:1180px;margin:0 auto;
+      z-index:40;
+      pointer-events:auto;
+    }
+    .brand{
+      display:flex;gap:12px;align-items:center;
+      backdrop-filter: blur(6px);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:12px;padding:8px 12px;
+      border:1px solid rgba(255,255,255,0.03);
+      box-shadow: 0 6px 18px rgba(2,8,23,0.6);
+    }
+    .logo {
+      width:44px;height:44px;border-radius:8px;
+      display:grid;place-items:center;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:#082019;font-weight:800;font-family:"Press Start 2P";
+      box-shadow: 0 4px 12px rgba(18,39,23,0.45), inset 0 -4px 10px rgba(255,255,255,0.06);
+      border:3px solid rgba(0,0,0,0.35);
+    }
+    .brand h1{font-size:14px;margin:0}
+    .brand p{font-size:10px;color:var(--muted);margin:0}
+
+    .nav-links{display:flex;gap:10px;align-items:center}
+    .btn-ghost, .btn-primary{
+      font-weight:700;display:inline-flex;align-items:center;gap:8px;
+      padding:10px 14px;border-radius:10px;text-decoration:none;
+      border:2px solid var(--pixel-border);
+      background:linear-gradient(180deg,var(--glass),transparent);
+      color:var(--muted);cursor:pointer;font-size:13px;
+      transition: all .18s ease;
+      box-shadow: 0 6px 12px rgba(2,8,23,0.4);
+      font-family: "Montserrat";
+    }
+    .btn-ghost:hover{transform:translateY(-3px);color:#fff}
+    .btn-primary{
+      background: linear-gradient(180deg,var(--accent),var(--accent-2));
+      color:#072217;border:none;padding:10px 16px;font-weight:800;
+      text-shadow: 0 1px rgba(255,255,255,0.12);
+    }
+    .btn-copy{font-family:"Press Start 2P";font-size:11px;padding:8px 12px;border-radius:8px}
+
+    /* Hero */
+    header.hero{
+      min-height:72vh;
+      display:grid;
+      place-items:center;
+      padding:86px 20px 48px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    /* animated gradient blocks behind hero */
+    .hero-inner{
+      max-width:1180px;width:100%;
+      display:grid;grid-template-columns: 1fr 420px;gap:32px;align-items:center;
+      margin:0 auto;z-index:6;
+    }
+    .hero-left{padding:22px;}
+    .server-title{
+      font-family:"Press Start 2P";font-size:34px;letter-spacing:1px;margin:0 0 10px;
+      color: white;text-shadow: 0 6px 24px rgba(0,0,0,0.6);
+    }
+    .tagline{color:var(--muted);font-size:15px;margin-bottom:18px}
+    .cta-group{display:flex;gap:12px;flex-wrap:wrap}
+    .ip-box{
+      background:linear-gradient(180deg,var(--glass),var(--glass-2));
+      padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);
+      display:flex;gap:8px;align-items:center;
+      box-shadow: 0 8px 22px rgba(4,10,20,0.45);
+    }
+    .ip-text{font-family:"Press Start 2P";font-size:12px;color:var(--muted);padding:2px 6px}
+    .small-muted{font-size:12px;color:var(--muted);margin-top:10px}
+
+    /* server status card */
+    .status-card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:18px;padding:18px;border:1px solid rgba(255,255,255,0.03);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+      display:flex;flex-direction:column;gap:10px;width:100%;
+      backdrop-filter: blur(6px);
+    }
+    .server-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .server-info{display:flex;gap:12px;align-items:center}
+    .server-icon{width:56px;height:56px;border-radius:10px;display:grid;place-items:center;font-family:"Press Start 2P";font-weight:800;color:#072217;background:linear-gradient(135deg,var(--accent-3),var(--accent));border:3px solid rgba(0,0,0,0.35)}
+    .server-name{font-weight:700}
+    .server-meta{font-size:12px;color:var(--muted)}
+
+    .status-badge{padding:8px 12px;border-radius:10px;font-weight:800;font-family:"Press Start 2P";font-size:12px}
+    .online{background:linear-gradient(180deg,#0ff1a0,#3ee3a8);color:#052018;box-shadow:inset 0 -6px 14px rgba(0,0,0,0.08)}
+    .offline{background:linear-gradient(180deg,#333,#1b1b1b);color:#aaa;border:1px solid rgba(255,255,255,0.02)}
+
+    /* features */
+    .features{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:26px}
+    .feature{padding:16px;border-radius:12px;background:var(--glass-2);border:1px solid rgba(255,255,255,0.02);min-height:120px}
+    .feature h3{margin:0 0 8px;font-size:13px}
+    .feature p{margin:0;color:var(--muted);font-size:13px}
+
+    /* footer */
+    footer{max-width:1180px;margin:36px auto;padding:16px;color:var(--muted);font-size:13px;text-align:center}
+
+    /* small screens */
+    @media (max-width:980px){
+      .hero-inner{grid-template-columns:1fr;gap:18px;padding:6px}
+      .features{grid-template-columns:repeat(2,1fr)}
+      .nav{padding:6px 12px;top:10px}
+    }
+    @media (max-width:560px){
+      .features{grid-template-columns:1fr}
+      .logo{width:40px;height:40px}
+      .server-title{font-size:22px}
+      .brand h1{font-size:12px}
+      .brand p{display:none}
+      .server-icon{width:48px;height:48px}
+      .hero{padding-top:76px;min-height:66vh}
+    }
+
+    /* subtle animated gradient panel behind right column */
+    .panel-animated{
+      position:relative;border-radius:18px;padding:10px;
+      overflow:hidden;
+      background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));
+      border:1px solid rgba(255,255,255,0.03);
+    }
+    .floating-tiles{
+      position:absolute;inset:0;z-index:2;pointer-events:none;
+    }
+
+    /* scroll in animations */
+    .fadein{opacity:0;transform:translateY(8px);transition:opacity .7s ease, transform .7s cubic-bezier(.2,.9,.26,1)}
+    .fadein.show{opacity:1;transform:none}
+
+    /* copy success toast */
+    .toast{
+      position:fixed;right:18px;bottom:18px;padding:10px 14px;border-radius:10px;background:linear-gradient(180deg,#0b1720,#081018);
+      color:var(--muted);border:1px solid rgba(255,255,255,0.03);box-shadow: 0 12px 30px rgba(0,0,0,0.6);z-index:80;font-weight:600;
+      transform: translateY(12px);opacity:0;transition:all .25s ease;
+    }
+    .toast.show{transform:none;opacity:1}
+
+    /* pixel border effect for special callout */
+    .pixel-card{
+      position:relative;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:14px;
+      border:4px solid #111;
+    }
+    .pixel-card:before{
+      content:"";position:absolute;inset:-8px;border-radius:18px;pointer-events:none;
+      background: linear-gradient(45deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00));
+      filter: blur(6px);
+    }
+
+    /* micro interactions */
+    .btn-ghost:active, .btn-primary:active{transform:translateY(0)}
+    .ip-copy{display:inline-flex;align-items:center;gap:8px}
+
+    /* small helper */
+    .muted{color:var(--muted)}
+  </style>
 </head>
 <body>
 
-<header>BOTREX SMP</header>
+  <!-- Canvas particle background (cover) -->
+  <canvas id="bg-canvas" style="position:fixed;inset:0;z-index:0"></canvas>
 
-<section class="hero">
-  <h1>BOTREX SMP</h1>
-  <p>Java & Bedrock Crossplay | Land Claim Survival</p>
-  <button class="btn" onclick="copyIP('BOTREX-SMP.aternos.me:34254')">Copy Java IP</button>
-  <button class="btn" onclick="copyIP('IP: BOTREX-SMP.aternos.me PORT: 34254')">Copy Bedrock IP</button>
-  <br /><br />
-  <a href="https://discord.gg/mKyMzX2xUV" target="_blank" class="btn">Join Discord</a>
-</section>
+  <!-- Nav -->
+  <nav class="nav" aria-label="Top navigation">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">B</div>
+      <div>
+        <h1>BOTREX SMP</h1>
+        <p>Java & Bedrock SMP</p>
+      </div>
+    </div>
 
-<section id="about">
-  <h2>About BOTREX SMP</h2>
-  <p>BOTREX SMP is a friendly Minecraft survival server supporting both Java and Bedrock players. Claim your land, build your dream base, and join exciting events with our community!</p>
-  <ul>
-    <li>Land claim protection system</li>
-    <li>Java & Bedrock crossplay</li>
-    <li>Active and friendly community</li>
-    <li>Regular events and giveaways</li>
-  </ul>
-</section>
+    <div class="nav-links">
+      <button class="btn-primary" id="joinDiscord">JOIN DISCORD</button>
+    </div>
+  </nav>
 
-<section id="join">
-  <h2>How to Join</h2>
+  <!-- HERO -->
+  <header class="hero" role="banner">
+    <div class="hero-inner">
+      <div class="hero-left">
+        <h2 class="server-title fadein">BOTREX SMP</h2>
+        <p class="tagline fadein">Vanilla feeling, land claim protection, Java & Bedrock crossplay, friendly community — join us and build your legend!</p>
 
-  <h3>Java Edition</h3>
-  <div class="ip-box" onclick="copyIP('BOTREX-SMP.aternos.me:34254')">BOTREX-SMP.aternos.me:34254</div>
-  <p>Make sure you are playing Minecraft 1.8.9  to Latest.</p>
+        <div class="cta-group fadein" style="margin-top:12px">
+          <div class="ip-box pixel-card" id="play">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;gap:10px;align-items:center">
+                <div class="ip-text">BOTREX-SMP.aternos.me:34254</div>
+                <button class="btn-ghost btn-copy ip-copy" data-ip="BOTREX-SMP.aternos.me:34254">Copy Java IP</button>
+                <button class="btn-ghost btn-copy ip-copy" data-ip="BOTREX-SMP.aternos.me:34254">Copy Bedrock IP</button>
+              </div>
+              <div class="small-muted">Click to copy the server address (Java or Bedrock).</div>
+            </div>
+          </div>
 
-  <h3>Bedrock Edition</h3>
-  <div class="ip-box" onclick="copyIP('IP: BOTREX-SMP.aternos.me PORT: 34254')">IP: BOTREX-SMP.aternos.me PORT: 34254</div>
-  <p>Enter the IP and port exactly as shown. Compatible with Minecraft Bedrock 1.21.x.</p>
-</section>
+          <a class="btn-primary" href=href="minecraft://?ip=BOTREX-SMP.aternos.me&port=34254">Quick Join</a>
+        </div>
 
-<section id="rules">
-  <h2>Server Rules</h2>
-  <ul>
-    <li>No griefing or stealing.</li>
-    <li>No hacking or cheating.</li>
-    <li>Respect all players.</li>
-    <li>Use appropriate language.</li>
-    <li>Have fun and be kind!</li>
-  </ul>
-</section>
+        <div class="small-muted fadein" style="margin-top:18px">
+        </div>
 
-<section id="discord">
-  <h2>Join Our Discord</h2>
-  <p>Chat with the community, get support, and stay updated!</p>
-  <div class="discord-widget">
-    <iframe src="https://discord.com/widget?id=1402651844408381480&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
-  </div>
-</section>
+        <!-- features preview -->
+        <div class="features fadein" id="features" style="margin-top:22px">
+          <div class="feature">
+            <h3>Land Claims</h3>
+            <p>Protect your base with simple land claim tools so griefers can't touch your builds.</p>
+          </div>
+          <div class="feature">
+            <h3>Crossplay</h3>
+            <p>Java & Bedrock players can team up, trade, and adventure on the same world.</p>
+          </div>
+          <div class="feature">
+            <h3>Active Staff</h3>
+            <p>Dedicated moderators and weekly events keep the community fun and fair.</p>
+          </div>
+        </div>
+      </div>
 
-<footer>
-  &copy; 2025 BOTREX SMP | Made with ❤️ for Minecraft fans
-</footer>
+      <div class="panel-animated fadein" aria-hidden="false">
+        <div class="status-card" id="statusPanel" role="region" aria-label="Server status">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div class="muted" style="font-size:12px">Server Status</div>
+              <div style="display:flex;gap:8px;align-items:end">
+                <div style="font-weight:800;font-size:18px">Live</div>
+                <div class="muted" style="font-size:12px">Java & Bedrock</div>
+              </div>
+            </div>
 
-<script src="js/scripts.js"></script>
+            <div style="display:flex;gap:8px;align-items:center">
+              <div class="muted" style="font-size:12px;text-align:right">Players now</div>
+              <div id="totalPlayers" style="font-weight:800;font-size:18px">—</div>
+            </div>
+          </div>
+
+          <div style="height:10px"></div>
+
+          <!-- Java server -->
+          <div class="server-row" style="align-items:center">
+            <div class="server-info">
+              <div class="server-icon">J</div>
+              <div>
+                <div class="server-name">Java</div>
+                <div class="server-meta" id="javaMeta">BOTREX-SMP.aternos.me:34254</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center">
+              <div id="javaPlayers" class="server-meta muted">—</div>
+              <div id="javaStatus" class="status-badge offline">Checking...</div>
+            </div>
+          </div>
+
+          <div style="height:4px"></div>
+
+          <!-- Bedrock server -->
+          <div class="server-row">
+            <div class="server-info">
+              <div class="server-icon">B</div>
+              <div>
+                <div class="server-name">Bedrock</div>
+                <div class="server-meta" id="bedrockMeta">BOTREX-SMP.aternos.me:34254</div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:10px;align-items:center">
+              <div id="bedPlayers" class="server-meta muted">—</div>
+              <div id="bedStatus" class="status-badge offline">Checking...</div>
+            </div>
+          </div>
+
+          <div style="height:8px"></div>
+
+          <div style="display:flex;gap:12px;align-items:center;justify-content:space-between">
+            <button class="btn-ghost" id="refreshStatus">Refresh</button>
+            <div class="muted" style="font-size:12px">Status updated live</div>
+          </div>
+        </div>
+
+        <div style="height:16px"></div>
+
+        <div class="pixel-card fadein" style="padding:12px;">
+          <strong style="display:block">Community</strong>
+          <div class="muted" style="margin-top:8px">Join our Discord for events, support, and giveaways.</div>
+          <div style="height:12px"></div>
+          <div style="display:flex;gap:8px">
+            <a class="btn-ghost" href="#discord">Join Discord</a>
+            <a class="btn-ghost" href="#rules">Rules</a>
+            <a class="btn-ghost" href="store.html">Store</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main style="max-width:1180px;margin:16px auto;padding:0 18px 36px;z-index:6;position:relative">
+    <!-- Quick sections (placeholders in case the user wants to extend) -->
+    <section id="discord" style="margin-top:18px">
+      <div style="display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:space-between">
+        <div>
+          <h3 style="margin:0 0 6px;font-family:'Press Start 2P',monospace;font-size:14px">Discord</h3>
+          <p class="muted" style="margin:0 0 8px">Join Discord server and make friends and talk in vc or chat.</p>
+        </div>
+        <div style="display:flex;gap:8px">
+          <a class="btn-primary" href="#" id="discordLink">Open Discord</a>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:28px" id="rules">
+      <h3 style="font-family:'Press Start 2P',monospace;font-size:14px;margin:0 0 10px">Server Rules</h3>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+        <div class="feature">
+          <h3>Be Respectful</h3>
+          <p class="muted">Harassment, racism, and toxicity will not be tolerated.</p>
+        </div>
+        <div class="feature">
+          <h3>No Griefing</h3>
+          <p class="muted">Do not destroy other players' builds. Use claims to protect.</p>
+        </div>
+        <div class="feature">
+          <h3>No Cheating</h3>
+          <p class="muted">No x-raying, duping, or using unfair clients.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © <span id="year"></span> BOTREX SMP — Built with ❤️ — IP: BOTREX-SMP.aternos.me:34254
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite">Copied to clipboard</div>
+
+  <script>
+    // ---------- CONFIG ----------
+    // Replace these addresses with your real server addresses:
+    const JAVA_ADDRESS = "play.botrex.net";
+    const JAVA_PORT = 25565;
+    const BED_ADDRESS = "play.botrex.net";
+    const BED_PORT = 19132;
+
+    // API endpoints (mcsrvstat recommended). We use mcsrvstat.us for Java and bedrock.
+    // Java: https://api.mcsrvstat.us/2/{address}
+    // Bedrock: https://api.mcsrvstat.us/bedrock/2/{address}
+    const JAVA_API = (addr) => `https://api.mcsrvstat.us/2/${addr}`;
+    const BED_API = (addr) => `https://api.mcsrvstat.us/bedrock/2/${addr}`;
+
+    // ---------- DOM ----------
+    const javaStatusEl = document.getElementById("javaStatus");
+    const bedStatusEl = document.getElementById("bedStatus");
+    const javaPlayersEl = document.getElementById("javaPlayers");
+    const bedPlayersEl = document.getElementById("bedPlayers");
+    const totalPlayersEl = document.getElementById("totalPlayers");
+    const refreshBtn = document.getElementById("refreshStatus");
+    const toast = document.getElementById("toast");
+
+    // ---------- utilities ----------
+    function showToast(text="Copied to clipboard"){
+      toast.textContent = text;
+      toast.classList.add("show");
+      setTimeout(()=>toast.classList.remove("show"),1600);
+    }
+
+    async function fetchJson(url){
+      try{
+        const res = await fetch(url, {cache:"no-cache"});
+        if(!res.ok) throw new Error("Network response not ok");
+        return await res.json();
+      }catch(err){
+        console.warn("fetchJson failed:", err);
+        return null;
+      }
+    }
+
+    // ---------- status updater ----------
+    async function updateStatus(){
+      // Set interim UI
+      javaStatusEl.textContent = "Checking...";
+      bedStatusEl.textContent = "Checking...";
+      javaStatusEl.className = "status-badge offline";
+      bedStatusEl.className = "status-badge offline";
+      javaPlayersEl.textContent = "—";
+      bedPlayersEl.textContent = "—";
+      totalPlayersEl.textContent = "—";
+
+      // Java
+      let javaData = await fetchJson(JAVA_API(`${JAVA_ADDRESS}:${JAVA_PORT}`));
+      // Fallback if the API doesn't support port in path reliably, try without port
+      if(!javaData) javaData = await fetchJson(JAVA_API(JAVA_ADDRESS));
+
+      // Bedrock
+      let bedData = await fetchJson(BED_API(`${BED_ADDRESS}:${BED_PORT}`));
+      if(!bedData) bedData = await fetchJson(BED_API(BED_ADDRESS));
+
+      // Interpret results
+      let javaOnline = javaData && javaData.online === true;
+      let bedOnline = bedData && bedData.online === true;
+
+      // Java UI
+      if(javaOnline){
+        const players = (javaData.players && (javaData.players.online ?? javaData.players?.online)) || 0;
+        javaPlayersEl.textContent = (players !== undefined) ? `${players} / ${javaData.players?.max ?? "?"}` : "—";
+        javaStatusEl.textContent = "ONLINE";
+        javaStatusEl.className = "status-badge online";
+      } else {
+        javaPlayersEl.textContent = "0";
+        javaStatusEl.textContent = "OFFLINE";
+        javaStatusEl.className = "status-badge offline";
+      }
+
+      // Bedrock UI
+      if(bedOnline){
+        const players = (bedData.players && bedData.players.online) || 0;
+        bedPlayersEl.textContent = (players !== undefined) ? `${players} / ${bedData.players?.max ?? "?"}` : "—";
+        bedStatusEl.textContent = "ONLINE";
+        bedStatusEl.className = "status-badge online";
+      } else {
+        bedPlayersEl.textContent = "0";
+        bedStatusEl.textContent = "OFFLINE";
+        bedStatusEl.className = "status-badge offline";
+      }
+
+      // Total players (sum if possible)
+      try{
+        const p1 = javaOnline ? (javaData.players?.online || 0) : 0;
+        const p2 = bedOnline ? (bedData.players?.online || 0) : 0;
+        const total = (Number(p1) + Number(p2)) || 0;
+        totalPlayersEl.textContent = total;
+      }catch(e){
+        totalPlayersEl.textContent = "—";
+      }
+    }
+
+    refreshBtn.addEventListener("click", () => {
+      refreshBtn.disabled = true;
+      refreshBtn.textContent = "Refreshing...";
+      updateStatus().finally(() => {
+        refreshBtn.disabled = false;
+        refreshBtn.textContent = "Refresh";
+      });
+    });
+
+    // initial fetch
+    updateStatus();
+
+    // periodic auto-refresh every 45 seconds
+    setInterval(updateStatus, 45000);
+
+    // ---------- copy buttons ----------
+    document.querySelectorAll(".ip-copy").forEach(btn => {
+      btn.addEventListener("click", async (e) => {
+        const ip = btn.getAttribute("data-ip");
+        try{
+          await navigator.clipboard.writeText(ip);
+          showToast(`Copied ${ip}`);
+        }catch(err){
+          showToast("Failed to copy");
+        }
+      });
+    });
+
+    // discord quick join placeholder
+    document.getElementById("joinDiscord").addEventListener("click", (e) => {
+      e.preventDefault();
+      // Replace with your actual discord invite link
+      const invite = "https://discord.gg/mKyMzX2xUV";
+      window.open(invite, "_blank");
+    });
+    document.getElementById("discordLink").addEventListener("click", (e) => {
+      e.preventDefault();
+      const invite = "https://discord.gg/mKyMzX2xUV";
+      window.open(invite, "_blank");
+    });
+
+    // set year
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // ---------- simple scroll fade-in observer ----------
+    const observer = new IntersectionObserver(entries=>{
+      entries.forEach(ent => {
+        if(ent.isIntersecting) ent.target.classList.add("show");
+      });
+    }, {threshold:0.12});
+    document.querySelectorAll(".fadein").forEach(el => observer.observe(el));
+
+    // ---------- Canvas particles background ----------
+    (function(){
+      const canvas = document.getElementById('bg-canvas');
+      const ctx = canvas.getContext('2d');
+      let w = canvas.width = innerWidth;
+      let h = canvas.height = innerHeight;
+      const DPR = Math.max(1, window.devicePixelRatio || 1);
+      canvas.width = w * DPR; canvas.height = h * DPR; canvas.style.width = w + "px"; canvas.style.height = h + "px";
+      ctx.scale(DPR, DPR);
+
+      let particles = [];
+      const maxParticles = Math.round((w*h)/65000); // density
+      function rand(min,max){return Math.random()*(max-min)+min}
+
+      function createParticles(){
+        particles = [];
+        const n = Math.max(12, maxParticles);
+        for(let i=0;i<n;i++){
+          particles.push({
+            x: rand(0,w),
+            y: rand(0,h),
+            r: rand(0.6,2.6),
+            vx: rand(-0.1,0.2),
+            vy: rand(-0.05,0.15),
+            alpha: rand(0.05,0.22),
+            phase: rand(0,Math.PI*2)
+          });
+        }
+      }
+      createParticles();
+
+      function draw(){
+        ctx.clearRect(0,0,w,h);
+
+        // subtle gradient overlay
+        const g = ctx.createLinearGradient(0,0,w,h);
+        g.addColorStop(0, "rgba(10,14,20,0.18)");
+        g.addColorStop(1, "rgba(0,6,10,0.22)");
+        ctx.fillStyle = g;
+        ctx.fillRect(0,0,w,h);
+
+        // particles
+        for(let p of particles){
+          p.phase += 0.01;
+          p.x += p.vx;
+          p.y += Math.sin(p.phase) * 0.14 + p.vy;
+          if(p.x < -10) p.x = w+10;
+          if(p.x > w+10) p.x = -10;
+          if(p.y > h+10) p.y = -10;
+          if(p.y < -10) p.y = h+10;
+
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(126,231,135,${p.alpha})`;
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+          ctx.fill();
+
+          // soft glow
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(122,211,255,${p.alpha*0.06})`;
+          ctx.arc(p.x, p.y, p.r*6, 0, Math.PI*2);
+          ctx.fill();
+        }
+
+        // floating squares (subtle, to evoke pixel blocks)
+        ctx.save();
+        ctx.globalAlpha = 0.06;
+        for(let i=0;i<8;i++){
+          const size = 12 + (i%3)*6;
+          const x = (Math.sin((Date.now()/6000) + i) + 1)/2 * w;
+          const y = (Math.cos((Date.now()/7000) + i) + 1)/2 * h;
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(x%w, y%h, size, size);
+        }
+        ctx.restore();
+
+        requestAnimationFrame(draw);
+      }
+      draw();
+
+      // resize handling
+      let resizeTO;
+      window.addEventListener("resize", ()=> {
+        clearTimeout(resizeTO);
+        resizeTO=setTimeout(()=>{
+          w = canvas.width = innerWidth;
+          h = canvas.height = innerHeight;
+          canvas.style.width = w + "px"; canvas.style.height = h + "px";
+          createParticles();
+        }, 150);
+      });
+
+    })();
+
+    // ---------- small keyboard interaction: press P to copy IP ----------
+    window.addEventListener("keydown", (e) => {
+      if(e.key.toLowerCase() === 'p'){
+        navigator.clipboard.writeText(`${JAVA_ADDRESS}:${JAVA_PORT}`).then(()=>showToast("Java IP copied"));
+      }
+    });
+
+  </script>
 </body>
 </html>
